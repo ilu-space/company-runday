@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Runday — Your AI Operations Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green: #1B6B4A;
+    --green-dark: #144f37;
+    --green-light: #e8f4ef;
+    --orange: #F5A623;
+    --orange-light: #fef5e4;
+    --text: #1a1a1a;
+    --muted: #5a6472;
+    --border: #e2e8e4;
+    --white: #ffffff;
+    --bg: #f9fafb;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    background: var(--white);
+    line-height: 1.6;
+    font-size: 16px;
+  }
+
+  h1, h2, h3 {
+    font-family: 'Playfair Display', Georgia, serif;
+    line-height: 1.2;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  img { display: block; max-width: 100%; }
+
+  /* ── NAV ─────────────────────────────────────────────────── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.97);
+    border-bottom: 1px solid var(--border);
+    padding: 0 5vw;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    backdrop-filter: blur(8px);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--green);
+  }
+
+  .nav-logo .dot {
+    width: 10px;
+    height: 10px;
+    background: var(--orange);
+    border-radius: 50%;
+    display: inline-block;
+    margin-left: 2px;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--muted);
+    transition: color .2s;
+  }
+
+  .nav-links a:hover { color: var(--green); }
+
+  .btn-nav {
+    background: var(--green);
+    color: var(--white) !important;
+    padding: 9px 20px;
+    border-radius: 8px;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    transition: background .2s !important;
+  }
+
+  .btn-nav:hover { background: var(--green-dark) !important; }
+
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 4px;
+    background: none;
+    border: none;
+  }
+
+  .hamburger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--text);
+    border-radius: 2px;
+    transition: .3s;
+  }
+
+  /* ── HERO ────────────────────────────────────────────────── */
+  .hero {
+    background: linear-gradient(135deg, #0e3d29 0%, #1B6B4A 55%, #2d8a60 100%);
+    color: var(--white);
+    padding: 90px 5vw 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -80px;
+    right: -80px;
+    width: 480px;
+    height: 480px;
+    background: radial-gradient(circle, rgba(245,166,35,.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -120px;
+    left: -60px;
+    width: 360px;
+    height: 360px;
+    background: radial-gradient(circle, rgba(255,255,255,.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(245,166,35,.18);
+    border: 1px solid rgba(245,166,35,.4);
+    color: var(--orange);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 100px;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    color: var(--white);
+    margin-bottom: 20px;
+    font-weight: 800;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--orange);
+  }
+
+  .hero-sub {
+    font-size: 1.125rem;
+    color: rgba(255,255,255,.82);
+    margin-bottom: 36px;
+    max-width: 480px;
+    line-height: 1.7;
+  }
+
+  .hero-cta-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    background: var(--orange);
+    color: var(--text);
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 14px 28px;
+    border-radius: 10px;
+    transition: transform .2s, box-shadow .2s;
+    box-shadow: 0 4px 20px rgba(245,166,35,.35);
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(245,166,35,.45);
+  }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: rgba(255,255,255,.85);
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: color .2s;
+  }
+
+  .btn-ghost:hover { color: var(--white); }
+
+  .btn-ghost svg { transition: transform .2s; }
+  .btn-ghost:hover svg { transform: translateX(3px); }
+
+  .hero-visual {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .briefing-card {
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 14px;
+    padding: 20px 22px;
+    backdrop-filter: blur(10px);
+    transition: transform .3s;
+  }
+
+  .briefing-card:hover { transform: translateY(-3px); }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .card-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--orange);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .card-title {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--white);
+  }
+
+  .card-time {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,.55);
+    margin-left: auto;
+  }
+
+  .card-body {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,.75);
+    line-height: 1.55;
+  }
+
+  .card-chip-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  .chip {
+    background: rgba(255,255,255,.13);
+    border-radius: 100px;
+    padding: 3px 10px;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,.85);
+    white-space: nowrap;
+  }
+
+  .chip.green { background: rgba(27,107,74,.5); }
+  .chip.orange { background: rgba(245,166,35,.25); color: var(--orange); }
+
+  /* ── PAIN STRIP ──────────────────────────────────────────── */
+  .pain-strip {
+    background: var(--green-light);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 36px 5vw;
+  }
+
+  .pain-strip-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .pain-label {
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: var(--green);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-right: 8px;
+  }
+
+  .pain-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    color: var(--muted);
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 5px 14px;
+  }
+
+  .pain-item .x {
+    color: #c0392b;
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+
+  /* ── SECTION SHARED ──────────────────────────────────────── */
+  .section {
+    padding: 90px 5vw;
+  }
+
+  .section-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+
+  .section-sub {
+    font-size: 1.05rem;
+    color: var(--muted);
+    max-width: 560px;
+    line-height: 1.7;
+    margin-bottom: 52px;
+  }
+
+  /* ── FEATURES GRID ───────────────────────────────────────── */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .feature-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 26px;
+    transition: box-shadow .25s, transform .25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--green), var(--orange));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .3s;
+  }
+
+  .feature-card:hover {
+    box-shadow: 0 8px 32px rgba(27,107,74,.1);
+    transform: translateY(-3px);
+  }
+
+  .feature-card:hover::after { transform: scaleX(1); }
+
+  .feature-icon {
+    width: 52px;
+    height: 52px;
+    background: var(--green-light);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 18px;
+  }
+
+  .feature-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--text);
+  }
+
+  .feature-desc {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  /* ── HOW IT WORKS ────────────────────────────────────────── */
+  .how-section { background: var(--bg); }
+
+  .steps-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    position: relative;
+  }
+
+  .steps-row::before {
+    content: '';
+    position: absolute;
+    top: 40px;
+    left: calc(16.66% + 20px);
+    right: calc(16.66% + 20px);
+    height: 2px;
+    background: linear-gradient(90deg, var(--green), var(--orange));
+    z-index: 0;
+  }
+
+  .step {
+    text-align: center;
+    padding: 0 24px 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .step-number {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--green);
+    color: var(--white);
+    font-size: 1.8rem;
+    font-weight: 800;
+    font-family: 'Playfair Display', serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    border: 4px solid var(--bg);
+    box-shadow: 0 0 0 2px var(--green);
+  }
+
+  .step:nth-child(2) .step-number {
+    background: var(--orange);
+    box-shadow: 0 0 0 2px var(--orange);
+    color: var(--text);
+  }
+
+  .step h3 {
+    font-size: 1.15rem;
+    margin-bottom: 10px;
+    color: var(--text);
+  }
+
+  .step p {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  /* ── INTEGRATIONS ────────────────────────────────────────── */
+  .integrations-section { background: var(--white); }
+
+  .integrations-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 0;
+  }
+
+  .integration-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 100px;
+    padding: 8px 18px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text);
+    transition: border-color .2s, box-shadow .2s;
+  }
+
+  .integration-pill:hover {
+    border-color: var(--green);
+    box-shadow: 0 2px 12px rgba(27,107,74,.12);
+  }
+
+  .integration-pill .pill-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+  }
+
+  .integration-note {
+    margin-top: 28px;
+    font-size: 0.9rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .integration-note::before {
+    content: '🔗';
+    font-size: 1rem;
+  }
+
+  .integration-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+
+  /* ── PRICING ─────────────────────────────────────────────── */
+  .pricing-section { background: var(--bg); }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    align-items: start;
+  }
+
+  .pricing-card {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    padding: 36px 32px;
+    position: relative;
+    transition: box-shadow .25s;
+  }
+
+  .pricing-card:hover {
+    box-shadow: 0 12px 40px rgba(27,107,74,.1);
+  }
+
+  .pricing-card.featured {
+    border-color: var(--green);
+    box-shadow: 0 8px 40px rgba(27,107,74,.14);
+  }
+
+  .popular-badge {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--green);
+    color: var(--white);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: 5px 16px;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+
+  .pricing-tier {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 10px;
+  }
+
+  .pricing-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .pricing-price sup {
+    font-size: 1.4rem;
+    vertical-align: super;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+  }
+
+  .pricing-cadence {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .pricing-desc {
+    font-size: 0.875rem;
+    color: var(--muted);
+    margin-bottom: 28px;
+    line-height: 1.55;
+    min-height: 48px;
+  }
+
+  .pricing-divider {
+    height: 1px;
+    background: var(--border);
+    margin-bottom: 24px;
+  }
+
+  .pricing-features {
+    list-style: none;
+    margin-bottom: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .pricing-features li {
+    font-size: 0.875rem;
+    color: var(--text);
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    line-height: 1.4;
+  }
+
+  .pricing-features li .check {
+    color: var(--green);
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .pricing-features li .dash {
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .btn-pricing {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 13px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: 2px solid var(--green);
+    color: var(--green);
+    transition: background .2s, color .2s;
+    cursor: pointer;
+    background: none;
+  }
+
+  .btn-pricing:hover,
+  .pricing-card.featured .btn-pricing {
+    background: var(--green);
+    color: var(--white);
+  }
+
+  .pricing-card.featured .btn-pricing:hover {
+    background: var(--green-dark);
+  }
+
+  /* ── FOUNDER NOTE ────────────────────────────────────────── */
+  .founder-section { background: var(--white); }
+
+  .founder-box {
+    background: linear-gradient(135deg, #0e3d29 0%, #1B6B4A 100%);
+    border-radius: 20px;
+    padding: 56px 52px;
+    color: var(--white);
+    max-width: 820px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .founder-box::before {
+    content: '"';
+    position: absolute;
+    top: -10px;
+    left: 36px;
+    font-family: 'Playfair Display', serif;
+    font-size: 10rem;
+    color: rgba(255,255,255,.08);
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .founder-box p {
+    font-size: 1.1rem;
+    line-height: 1.75;
+    color: rgba(255,255,255,.88);
+    margin-bottom: 28px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .founder-sig {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .founder-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+
+  .founder-name {
+    font-weight: 700;
+    color: var(--white);
+    font-size: 0.95rem;
+  }
+
+  .founder-role {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,.6);
+  }
+
+  /* ── FAQ ─────────────────────────────────────────────────── */
+  .faq-section { background: var(--bg); }
+
+  .faq-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    max-width: 940px;
+  }
+
+  .faq-item {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 26px;
+    transition: box-shadow .2s;
+  }
+
+  .faq-item:hover {
+    box-shadow: 0 4px 20px rgba(27,107,74,.08);
+  }
+
+  .faq-q {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+
+  .faq-a {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  /* ── CTA / SIGNUP ────────────────────────────────────────── */
+  .cta-section {
+    background: linear-gradient(135deg, #0e3d29 0%, #1B6B4A 100%);
+    padding: 90px 5vw;
+    color: var(--white);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(245,166,35,.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .cta-inner {
+    max-width: 580px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cta-section h2 {
+    font-size: clamp(2rem, 3.5vw, 2.8rem);
+    color: var(--white);
+    margin-bottom: 16px;
+  }
+
+  .cta-section p {
+    font-size: 1.05rem;
+    color: rgba(255,255,255,.78);
+    margin-bottom: 40px;
+    line-height: 1.7;
+  }
+
+  .signup-form {
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 20px;
+    padding: 32px;
+    backdrop-filter: blur(10px);
+    text-align: left;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .form-group label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(255,255,255,.75);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 8px;
+    padding: 11px 14px;
+    font-size: 0.9rem;
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color .2s;
+  }
+
+  .form-group input::placeholder,
+  .form-group select::placeholder,
+  .form-group textarea::placeholder {
+    color: rgba(255,255,255,.4);
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-color: var(--orange);
+  }
+
+  .form-group select option {
+    background: #1B6B4A;
+    color: var(--white);
+  }
+
+  .form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  .btn-submit {
+    width: 100%;
+    background: var(--orange);
+    color: var(--text);
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 15px 24px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    margin-top: 6px;
+    transition: transform .2s, box-shadow .2s;
+    box-shadow: 0 4px 18px rgba(245,166,35,.4);
+  }
+
+  .btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(245,166,35,.5);
+  }
+
+  .btn-submit:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .form-note {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,.5);
+    text-align: center;
+    margin-top: 14px;
+  }
+
+  /* ── FOOTER ──────────────────────────────────────────────── */
+  footer {
+    background: #0d1f18;
+    color: rgba(255,255,255,.6);
+    padding: 40px 5vw;
+  }
+
+  .footer-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+    font-size: 0.85rem;
+  }
+
+  .footer-links a {
+    color: rgba(255,255,255,.55);
+    transition: color .2s;
+  }
+
+  .footer-links a:hover { color: var(--white); }
+
+  .footer-copy {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,.35);
+  }
+
+  .footer-copy a {
+    color: rgba(255,255,255,.5);
+    border-bottom: 1px solid rgba(255,255,255,.2);
+    transition: color .2s;
+  }
+
+  .footer-copy a:hover { color: var(--white); }
+
+  /* ── MOBILE NAV ──────────────────────────────────────────── */
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    inset: 64px 0 0;
+    background: var(--white);
+    z-index: 99;
+    padding: 28px 5vw;
+    flex-direction: column;
+    gap: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  .mobile-menu.open { display: flex; }
+
+  .mobile-menu a {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text);
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    display: block;
+  }
+
+  /* ── RESPONSIVE ──────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .hero-inner { grid-template-columns: 1fr; gap: 44px; }
+    .hero-visual { display: none; }
+    .features-grid { grid-template-columns: 1fr 1fr; }
+    .steps-row { grid-template-columns: 1fr; gap: 40px; }
+    .steps-row::before { display: none; }
+    .pricing-grid { grid-template-columns: 1fr; max-width: 420px; }
+    .faq-grid { grid-template-columns: 1fr; }
+    .integration-cols { grid-template-columns: 1fr; gap: 36px; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .form-row { grid-template-columns: 1fr; }
+    .founder-box { padding: 36px 28px; }
+    .footer-inner { flex-direction: column; text-align: center; }
+    .footer-links { justify-content: center; }
+  }
+
+  @media (max-width: 560px) {
+    .features-grid { grid-template-columns: 1fr; }
+    .hero { padding: 60px 5vw 60px; }
+    .section { padding: 64px 5vw; }
+    .pain-strip-inner { flex-direction: column; align-items: flex-start; }
+  }
+
+  /* ── JS-GATED ANIMATIONS ─────────────────────────────────── */
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity .5s ease, transform .5s ease;
+  }
+
+  .js .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    Runday<span class="dot"></span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how-it-works">How It Works</a></li>
+    <li><a href="#integrations">Integrations</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#signup" class="btn-nav">Get Early Access</a></li>
+  </ul>
+  <button class="hamburger" aria-label="Open menu" id="hamburger">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#features" onclick="closeMobile()">Features</a>
+  <a href="#how-it-works" onclick="closeMobile()">How It Works</a>
+  <a href="#integrations" onclick="closeMobile()">Integrations</a>
+  <a href="#pricing" onclick="closeMobile()">Pricing</a>
+  <a href="#faq" onclick="closeMobile()">FAQ</a>
+  <a href="#signup" onclick="closeMobile()">Get Early Access →</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-badge">✦ Now in early access</div>
+      <h1>Run your business.<br>Let Runday <em>manage the rest.</em></h1>
+      <p class="hero-sub">Your AI operations manager for small business — it follows up with leads, chases invoices, manages your calendar, and briefs you every morning. No workflows to build. Just connect and go.</p>
+      <div class="hero-cta-row">
+        <a href="#signup" class="btn-primary">Get Early Access →</a>
+        <a href="#how-it-works" class="btn-ghost">
+          See how it works
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="briefing-card">
+        <div class="card-header">
+          <div class="card-icon">☀️</div>
+          <div>
+            <div class="card-title">Your Morning Briefing</div>
+          </div>
+          <div class="card-time">7:02 AM</div>
+        </div>
+        <div class="card-body">
+          Good morning! Here's your day at a glance. You have <strong style="color:#fff">3 client meetings</strong>, <strong style="color:#fff">2 unpaid invoices</strong> ($4,200 total), and a warm lead who hasn't heard back in 5 days.
+        </div>
+        <div class="card-chip-row">
+          <span class="chip orange">⚠️ Follow-up needed</span>
+          <span class="chip green">✓ Reminders sent</span>
+        </div>
+      </div>
+
+      <div class="briefing-card">
+        <div class="card-header">
+          <div class="card-icon">💬</div>
+          <div>
+            <div class="card-title">Runday drafted a follow-up</div>
+          </div>
+          <div class="card-time">9:14 AM</div>
+        </div>
+        <div class="card-body">
+          "Hi Marcus — just circling back on the proposal from last week. Happy to answer any questions or hop on a quick call…"
+        </div>
+        <div class="card-chip-row">
+          <span class="chip">Review & send</span>
+          <span class="chip">Edit</span>
+          <span class="chip orange">Auto-send in 2h</span>
+        </div>
+      </div>
+
+      <div class="briefing-card">
+        <div class="card-header">
+          <div class="card-icon">📊</div>
+          <div>
+            <div class="card-title">Cash Flow Alert</div>
+          </div>
+          <div class="card-time">Today</div>
+        </div>
+        <div class="card-body">
+          3 invoices due this week. $8,400 incoming if collected on time. Heads up: 2 recurring expenses hit on Friday.
+        </div>
+        <div class="card-chip-row">
+          <span class="chip green">✓ Reminders scheduled</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAIN STRIP -->
+<div class="pain-strip">
+  <div class="pain-strip-inner">
+    <span class="pain-label">Sound familiar?</span>
+    <span class="pain-item"><span class="x">✗</span> Leads ghosted because you forgot to follow up</span>
+    <span class="pain-item"><span class="x">✗</span> Late invoices you're too busy to chase</span>
+    <span class="pain-item"><span class="x">✗</span> Double-booked calendar</span>
+    <span class="pain-item"><span class="x">✗</span> No idea where cash flow stands this week</span>
+    <span class="pain-item"><span class="x">✗</span> Admin eating your billable hours</span>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">What Runday does</div>
+      <h2 class="section-title">Everything ops. Done automatically.</h2>
+      <p class="section-sub">Runday works quietly in the background so the tedious back-office work gets handled — without you thinking about it.</p>
+    </div>
+    <div class="features-grid">
+
+      <div class="feature-card reveal">
+        <div class="feature-icon">☀️</div>
+        <div class="feature-title">Morning Briefing</div>
+        <p class="feature-desc">Start every day with an AI-generated summary of your schedule, outstanding invoices, new leads, and action items — delivered via text, email, or voice.</p>
+      </div>
+
+      <div class="feature-card reveal">
+        <div class="feature-icon">💬</div>
+        <div class="feature-title">Smart Follow-Ups</div>
+        <p class="feature-desc">Runday automatically drafts and sends follow-up messages to leads and clients based on your communication style and business rules. Never lose a deal to silence again.</p>
+      </div>
+
+      <div class="feature-card reveal">
+        <div class="feature-icon">💰</div>
+        <div class="feature-title">Invoice & Payment Nudges</div>
+        <p class="feature-desc">Connects to QuickBooks, Stripe, or FreshBooks to track unpaid invoices and send polite, persistent payment reminders on your behalf.</p>
+      </div>
+
+      <div class="feature-card reveal">
+        <div class="feature-icon">📅</div>
+        <div class="feature-title">Calendar Command Center</div>
+        <p class="feature-desc">Manages scheduling, avoids conflicts, sends confirmations and reminders to clients, and reschedules gracefully when things change.</p>
+      </div>
+
+      <div class="feature-card reveal">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title">Cash Flow Radar</div>
+        <p class="feature-desc">Surfaces weekly financial snapshots — what's coming in, what's going out, and early warnings when cash flow might get tight.</p>
+      </div>
+
+      <div class="feature-card reveal">
+        <div class="feature-icon">🔗</div>
+        <div class="feature-title">One-Click Tool Sync</div>
+        <p class="feature-desc">Connects to Google Workspace, Outlook, QuickBooks, Stripe, Calendly, Mailchimp, and dozens more. No APIs to configure — just log in and go.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section how-section" id="how-it-works">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">How it works</div>
+      <h2 class="section-title">Up and running in under 10 minutes.</h2>
+      <p class="section-sub">No complex onboarding. No workflows to design. Just three steps and Runday starts managing your operations.</p>
+    </div>
+    <div class="steps-row">
+      <div class="step reveal">
+        <div class="step-number">1</div>
+        <h3>Connect your tools</h3>
+        <p>Log in to your existing accounts — Google Workspace, QuickBooks, Stripe, Calendly, and more. Runday reads what it needs, securely.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-number">2</div>
+        <h3>Describe your business</h3>
+        <p>Tell Runday how you work: your communication tone, follow-up cadence, invoice terms, and scheduling preferences — in plain English.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-number">3</div>
+        <h3>Get back to the work you love</h3>
+        <p>Runday takes it from here. Your morning briefing arrives, follow-ups go out, invoices get chased, and your calendar stays clean.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTEGRATIONS -->
+<section class="section integrations-section" id="integrations">
+  <div class="section-inner">
+    <div class="integration-cols">
+      <div class="reveal">
+        <div class="section-label">Works with your stack</div>
+        <h2 class="section-title">Plugs into the tools you already use.</h2>
+        <p class="section-sub" style="margin-bottom:0">No ripping out your tech stack. Runday connects to the tools small businesses already rely on — and starts working within minutes of setup.</p>
+        <p class="integration-note" style="margin-top: 24px;">More integrations added monthly based on user requests.</p>
+      </div>
+
+      <div class="reveal">
+        <div class="integrations-grid">
+          <div class="integration-pill"><span class="pill-icon">📧</span>Gmail</div>
+          <div class="integration-pill"><span class="pill-icon">📧</span>Outlook</div>
+          <div class="integration-pill"><span class="pill-icon">📅</span>Google Calendar</div>
+          <div class="integration-pill"><span class="pill-icon">📅</span>Calendly</div>
+          <div class="integration-pill"><span class="pill-icon">💼</span>QuickBooks</div>
+          <div class="integration-pill"><span class="pill-icon">💳</span>Stripe</div>
+          <div class="integration-pill"><span class="pill-icon">📒</span>FreshBooks</div>
+          <div class="integration-pill"><span class="pill-icon">📊</span>Google Workspace</div>
+          <div class="integration-pill"><span class="pill-icon">📬</span>Mailchimp</div>
+          <div class="integration-pill"><span class="pill-icon">👥</span>HubSpot CRM</div>
+          <div class="integration-pill"><span class="pill-icon">🗂️</span>Notion</div>
+          <div class="integration-pill"><span class="pill-icon">💬</span>Slack</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="section pricing-section" id="pricing">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">Pricing</div>
+      <h2 class="section-title">Simple, transparent pricing.</h2>
+      <p class="section-sub">No seat fees. No hidden add-ons. Cancel any month. Early-access members lock in launch pricing permanently.</p>
+    </div>
+
+    <div class="pricing-grid">
+
+      <div class="pricing-card reveal">
+        <div class="pricing-tier">Starter</div>
+        <div class="pricing-price"><sup>$</sup>49</div>
+        <div class="pricing-cadence">per month, billed monthly</div>
+        <div class="pricing-desc">For solo operators just getting started with AI-assisted operations.</div>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li><span class="check">✓</span> Daily morning briefing</li>
+          <li><span class="check">✓</span> Invoice & payment reminders</li>
+          <li><span class="check">✓</span> Calendar management</li>
+          <li><span class="check">✓</span> Up to 3 tool integrations</li>
+          <li><span class="check">✓</span> Email delivery</li>
+          <li><span class="dash">–</span> Smart follow-ups</li>
+          <li><span class="dash">–</span> Cash Flow Radar</li>
+        </ul>
+        <a href="#signup" class="btn-pricing">Get Started</a>
+      </div>
+
+      <div class="pricing-card featured reveal">
+        <div class="popular-badge">Most Popular</div>
+        <div class="pricing-tier">Growth</div>
+        <div class="pricing-price"><sup>$</sup>99</div>
+        <div class="pricing-cadence">per month, billed monthly</div>
+        <div class="pricing-desc">For small businesses ready to automate their entire operations layer.</div>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li><span class="check">✓</span> Everything in Starter</li>
+          <li><span class="check">✓</span> Smart lead follow-ups</li>
+          <li><span class="check">✓</span> Cash Flow Radar</li>
+          <li><span class="check">✓</span> Unlimited tool integrations</li>
+          <li><span class="check">✓</span> SMS + email + voice briefing</li>
+          <li><span class="check">✓</span> Custom tone & voice settings</li>
+          <li><span class="check">✓</span> Priority support</li>
+        </ul>
+        <a href="#signup" class="btn-pricing">Get Early Access</a>
+      </div>
+
+      <div class="pricing-card reveal">
+        <div class="pricing-tier">Team</div>
+        <div class="pricing-price"><sup>$</sup>199</div>
+        <div class="pricing-cadence">per month, up to 20 seats</div>
+        <div class="pricing-desc">For small teams that need shared visibility and coordinated operations.</div>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li><span class="check">✓</span> Everything in Growth</li>
+          <li><span class="check">✓</span> Team-wide briefings</li>
+          <li><span class="check">✓</span> Shared CRM follow-up rules</li>
+          <li><span class="check">✓</span> Multi-user calendar management</li>
+          <li><span class="check">✓</span> Consolidated cash flow view</li>
+          <li><span class="check">✓</span> Dedicated onboarding call</li>
+          <li><span class="check">✓</span> Slack-native notifications</li>
+        </ul>
+        <a href="#signup" class="btn-pricing">Get Started</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOUNDER NOTE -->
+<section class="section founder-section">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">A note from the founder</div>
+      <h2 class="section-title" style="margin-bottom: 40px;">Why we built this.</h2>
+    </div>
+    <div class="founder-box reveal">
+      <p>Most small business owners didn't start their business to spend half their week chasing invoices, following up on unanswered emails, and manually confirming appointments. They started it because they're great at something — a trade, a skill, a service — and they want to spend their days doing that work.</p>
+      <p>But the moment a business gets traction, the operations pile up. It's not glamorous, and it's not why you went out on your own. We built Runday to be the back-office teammate that never calls in sick, never forgets to follow up, and never drops the ball on an invoice. So you can get back to the work you actually love.</p>
+      <p style="margin-bottom:0">We're in early access and actively talking to every new customer ourselves. If you join now, you'll help shape what Runday becomes — and we're genuinely grateful for that.</p>
+      <div class="founder-sig" style="margin-top:28px">
+        <div class="founder-avatar">👋</div>
+        <div>
+          <div class="founder-name">The Runday Team</div>
+          <div class="founder-role">Founder — talk to us directly while we're still small</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section faq-section" id="faq">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">FAQ</div>
+      <h2 class="section-title">Questions we hear a lot.</h2>
+      <p class="section-sub">Honest answers — no marketing spin.</p>
+    </div>
+
+    <div class="faq-grid">
+
+      <div class="faq-item reveal">
+        <div class="faq-q">Does Runday actually send emails on my behalf, or just draft them?</div>
+        <p class="faq-a">Both — your choice. By default, Runday drafts messages for your approval. You can configure specific workflows (like invoice reminders) to send automatically, or keep full control and just review drafts before they go out.</p>
+      </div>
+
+      <div class="faq-item reveal">
+        <div class="faq-q">How secure is connecting my accounts?</div>
+        <p class="faq-a">We use OAuth — the same secure login standard used by major platforms — so we never see your passwords. Your data is encrypted in transit and at rest, and you can disconnect any integration at any time from your settings.</p>
+      </div>
+
+      <div class="faq-item reveal">
+        <div class="faq-q">What if my business is a bit unusual — will Runday understand how I work?</div>
+        <p class="faq-a">Runday is configured through plain English. During setup you describe your follow-up rules, tone, scheduling preferences, and business context. The more you tell it, the better it fits your workflow. Early-access customers also get direct access to our team to dial things in.</p>
+      </div>
+
+      <div class="faq-item reveal">
+        <div class="faq-q">I'm not technical. Will setup actually be easy?</div>
+        <p class="faq-a">Yes. There are no APIs to configure, no Zapier-style workflows to build, and no spreadsheets to maintain. You connect accounts with standard logins and describe your business in plain text. Most users are up and running in under ten minutes.</p>
+      </div>
+
+      <div class="faq-item reveal">
+        <div class="faq-q">Can I cancel anytime?</div>
+        <p class="faq-a">Absolutely. There are no contracts or lock-in periods. Cancel from your account settings at any time and you won't be charged again. We'd rather you stay because Runday genuinely helps you than because leaving feels like a hassle.</p>
+      </div>
+
+      <div class="faq-item reveal">
+        <div class="faq-q">Is this right for my industry?</div>
+        <p class="faq-a">Runday is built specifically for service-based small businesses — contractors, consultants, agencies, health & wellness practitioners, and creative professionals. If you have clients, invoices, a calendar, and leads, Runday is built for you.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA / SIGNUP -->
+<section class="cta-section" id="signup">
+  <div class="cta-inner">
+    <div class="section-label" style="color: rgba(255,255,255,.6); margin-bottom: 12px;">Join the early access list</div>
+    <h2>Ready to get your time back?</h2>
+    <p>Spots are limited during early access. Join now to lock in launch pricing and get hands-on help from our founding team.</p>
+
+    <form class="signup-form" action="/signup" method="POST">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name">Your Name</label>
+          <input type="text" id="name" name="name" placeholder="Jane Smith">
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address *</label>
+          <input type="email" id="email" name="email" placeholder="jane@yourbusiness.com" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="company">Business Name</label>
+          <input type="text" id="company" name="company" placeholder="Smith Consulting">
+        </div>
+        <div class="form-group">
+          <label for="interest">Industry</label>
+          <select id="interest" name="interest">
+            <option value="" disabled selected>Select your industry</option>
+            <option value="contractor">Contractor / Trades</option>
+            <option value="consultant">Consultant</option>
+            <option value="agency">Agency / Creative</option>
+            <option value="health">Health & Wellness</option>
+            <option value="other">Other Service Business</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom: 16px;">
+        <label for="description">Biggest operational headache right now?</label>
+        <textarea id="description" name="description" placeholder="e.g. I spend way too much time chasing unpaid invoices..."></textarea>
+      </div>
+      <button type="submit" class="btn-submit">Request Early Access →</button>
+      <p class="form-note">No spam. No hard sells. We'll follow up personally within one business day.</p>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">
+      Runday<span style="color: var(--orange); margin-left: 2px;">.</span>
+    </div>
+    <ul class="footer-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#signup">Get Access</a></li>
+    </ul>
+    <div class="footer-copy">
+      © <span class="year"></span> Runday. All rights reserved. &nbsp;|&nbsp;
+      Powered by <a href="https://madmantra.com" target="_blank" rel="noopener">MadMantra</a>
+    </div>
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script>
+  document.documentElement.classList.add('js');
+</script>
+
+<script>
+  // Mobile nav
+  var hamburger = document.getElementById('hamburger');
+  var mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', function() {
+    mobileMenu.classList.toggle('open');
+  });
+  function closeMobile() {
+    mobileMenu.classList.remove('open');
+  }
+</script>
+
+<script>
+  // Scroll reveal
+  var reveals = document.querySelectorAll('.reveal');
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(function(el) { io.observe(el); });
+</script>
+
+<script>
+  // Copyright year
+  document.querySelectorAll('.year').forEach(function(e) {
+    e.textContent = new Date().getFullYear();
+  });
+</script>
+
+<script>
+document.querySelectorAll('form').forEach(function(form) {
+  var action = form.getAttribute('action') || '';
+  if (action.indexOf('/signup') === -1) return;
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    var data = {};
+    ['email','name','company','interest','description'].forEach(function(k){
+      var el = form.querySelector('[name="' + k + '"]');
+      if (el && el.value) data[k] = el.value;
+    });
+    var btn = form.querySelector('button, input[type=submit]');
+    if (btn) btn.disabled = true;
+    fetch('https://api.madmantra.app/api/landing/runday/signup', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    }).then(function(r) {
+      if (!r.ok) throw new Error('signup failed');
+      form.innerHTML = '<div role="status" style="text-align:center;padding:24px 8px"><div style="font-size:40px;line-height:1">&#9989;</div><h3 style="margin:12px 0 6px">Message received!</h3><p style="margin:0;opacity:.8">Thanks for reaching out. We will be in touch shortly.</p></div>';
+      form.scrollIntoView({behavior:'smooth', block:'center'});
+    }).catch(function(){
+      if (btn) btn.disabled = false;
+      alert('Something went wrong — please try again.');
+    });
+  });
+});
+</script>
+
+</body>
+</html>
